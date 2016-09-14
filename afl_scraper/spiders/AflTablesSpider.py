@@ -5,7 +5,7 @@ class AflTablesSpider(scrapy.Spider):
     name = "afl_tables"
     allowed_domains = ["afltables.com"]
     start_urls = map(lambda x: "http://afltables.com/afl/seas/" + str(x) + ".html", range(1997, 2016))
-    download_delay = 10
+    download_delay = 3
 
     def parse(self, response):
         for href in response.xpath('//a[contains(@href, "/stats/games")]/@href'):
