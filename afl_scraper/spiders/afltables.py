@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import scrapy
 import os
 import fnmatch
@@ -14,7 +16,7 @@ AFL_SUB_OFF = " ↓"
 class AflTablesSpider(scrapy.Spider):
     name = "afl_tables"
     allowed_domains = ["afltables.com"]
-    start_urls = map(lambda x: "http://afltables.com/afl/seas/" + str(x) + ".html", range(1997, 2016))
+    start_urls = map(lambda x: "http://afltables.com/afl/seas/" + str(x) + ".html", range(1997, 2017))
     download_delay = 3
     
     def parse(self, response):
