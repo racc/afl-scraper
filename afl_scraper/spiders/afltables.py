@@ -16,7 +16,7 @@ AFL_SUB_OFF = " ↓"
 class AflTablesSpider(scrapy.Spider):
     name = "afl_tables"
     allowed_domains = ["afltables.com"]
-    start_urls = map(lambda x: "http://afltables.com/afl/seas/" + str(x) + ".html", range(1997, 2017))
+    start_urls = map(lambda x: "http://afltables.com/afl/seas/" + str(x) + ".html", range(2017, 2018))
     download_delay = 3
     
     def parse(self, response):
@@ -91,3 +91,5 @@ def get_team_stats(team_name, normalized_score, tbody):
         team_stats.append(stats)
     
     return team_stats
+
+convert_html_to_psv("/home/jason/Work/afl_data/test_data/2017")
