@@ -3,6 +3,7 @@
 import scrapy
 import os
 import fnmatch
+import re
 
 from lxml import etree
 
@@ -16,7 +17,7 @@ AFL_SUB_OFF = " ↓"
 class AflTablesSpider(scrapy.Spider):
     name = "afl_tables"
     allowed_domains = ["afltables.com"]
-    start_urls = map(lambda x: "http://afltables.com/afl/seas/" + str(x) + ".html", range(2017, 2018))
+    start_urls = map(lambda x: "http://afltables.com/afl/seas/" + str(x) + ".html", range(2018, 2019))
     download_delay = 3
     
     def parse(self, response):
@@ -46,7 +47,7 @@ def convert_html_to_psv(path):
             psvfilename = os.path.splitext(filename)[0] + ".psv"
             psvfile = os.path.join(root, psvfilename)
             print("Writing: " + psvfile)            
-            with open(psvfile, 'wb') as fpsv:   
+            with open(psvfile, 'w') as fpsv:   
                 fpsv.write(psvdata)
 
 def get_match_stats_psv(html):
@@ -75,13 +76,18 @@ def get_team_stats(team_name, normalized_score, tbody):
     for tr in tbody.xpath("tr"):
         p_stats = {}
         tds = tr.xpath("td")
-        p_stats["#"] = tds[0].text.encode('utf-8').replace(AFL_SUB_ON, "").replace(AFL_SUB_OFF, "").strip()
-        p_stats["S_ON"] = str((tds[0].text.encode('utf-8').find(AFL_SUB_ON) != -1).numerator)
-        p_stats["S_OFF"] = str((tds[0].text.encode('utf-8').find(AFL_SUB_OFF) != -1).numerator)
+        p_stats["#"] = tds[0].text.replace(AFL_SUB_ON, "").replace(AFL_SUB_OFF, "").strip()
+        p_stats["S_ON"] = str((tds[0].text.find(AFL_SUB_ON) != -1).numerator)
+        p_stats["S_OFF"] = str((tds[0].text.find(AFL_SUB_OFF) != -1).numerator)
         p_stats["T_NM"] = team_name
         p_stats["T_NS"] = str(normalized_score)
-        p_stats["P_NM"] = tds[1].xpath("a")[0].text
         
+        
+        player_url = tds[1].xpath("a/@href")
+        player_name = re.search(r"\.\./\.\./players/\w{1}/(.+)\.html", str(player_url)).group(1)
+        #p_stats["P_NM"] = tds[1].xpath("a")[0].text
+        p_stats["P_NM"] = player_name
+
         for i in range(2, 25):
             header_index = i + 4;
             header = AFL_STAT_HEADER[header_index]
@@ -92,4 +98,4 @@ def get_team_stats(team_name, normalized_score, tbody):
     
     return team_stats
 
-convert_html_to_psv("/home/jason/Work/afl_data/test_data/2017")
+convert_html_to_psv("/home/jason/Work/afl_scraper/afl_scraper/spiders/data/2019")
