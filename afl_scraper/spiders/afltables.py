@@ -93,9 +93,9 @@ def get_team_stats(team_name, normalized_score, tbody):
             header = AFL_STAT_HEADER[header_index]
             p_stats[header] = tds[i].text.strip() if tds[i].text.strip() else "0"
         
-        stats = map(lambda x: p_stats[x], AFL_STAT_HEADER)
+        stats = [ p_stats[x] for x in AFL_STAT_HEADER ]
         team_stats.append(stats)
     
     return team_stats
 
-convert_html_to_psv("/home/jason/Work/afl_scraper/afl_scraper/spiders/data/2019")
+convert_html_to_psv("/home/jason/Work/afl_data/test_data/")
